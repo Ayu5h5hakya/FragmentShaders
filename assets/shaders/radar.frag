@@ -25,4 +25,5 @@ void main() {
   vec3 stepColor = vec3(0.1);
 
   vec2 coord = centeredCoordinates();
+  float dist = length(coord);
 }
