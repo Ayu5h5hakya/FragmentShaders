@@ -30,6 +30,15 @@ float stepPct(float st, float rad) {
   return pct1 * (1 - pct2);
 }
 
+float vectorAngleInDegrees(vec2 coord) {
+  float scaledTime = time * TIME_SCALE;
+  vec2 ref = vec2(cos(scaledTime), sin(scaledTime));
+  float dot = dot(coord, ref);
+  float det = coord.x*ref.y - coord.y*ref.x;
+  float angle = (atan(det,dot)) * 180./PI;
+  return angle;
+}
+
 void main() {
   float lineWidth = 0.01;
   float spreadAngle = 90.0;
@@ -52,5 +61,13 @@ void main() {
     color += stepColor*stepPct;
   } else {
     color += xPct*stepColor + yPct*stepColor;
+  }
+
+  float angle = vectorAngleInDegrees(coord);
+  if(angle >= 0.0 && angle <=spreadAngle && dist <0.682) {
+    fragColor = vec4(mix(vec3(.7,.7,0.),color,smoothstep(0., spreadAngle, angle)),1.);
+  } else {
+    fragColor = vec4(color,1.);
+  
   }
 }
