@@ -1,40 +1,78 @@
-#ifdef GL_ES
+#version 460 core
+
+#include <flutter/runtime_effect.glsl>
+
 precision mediump float;
-#endif
 
-uniform vec2 u_resolution;
-uniform vec2 u_mouse;
-uniform float u_time;
+uniform vec2 resolution;
+uniform float time;
+out vec4 fragColor;
 
-vec3 palette(float t) {
-    vec3 a = vec3(0.5);
-    vec3 b = vec3(0.5);
-    vec3 c = vec3(1.0);
-    vec3 d = vec3(0.263, 0.416, 0.557);
-    return a +b*cos(6.28318*(c*t+d));
+#define PI 3.1415926535897932384626433832795
+#define TIME_SCALE 0.0005
+
+float vectorAngleInDegrees(vec2 coord) {
+  float scaledTime = time * TIME_SCALE;
+  vec2 ref = vec2(cos(scaledTime), sin(scaledTime));
+  float dot = dot(coord, ref);
+  float det = coord.x*ref.y - coord.y*ref.x;
+  float angle = (atan(det,dot)) * 180./PI;
+  return angle;
 }
 
-void main(){
-    vec2 st = gl_FragCoord.xy/u_resolution;
-    st -= vec2(0.5);
-    st *= 2.0;
-    st.x *= u_resolution.x/ u_resolution.y;
-    vec2 st0 = st;
-    vec3 final = vec3(0.0);
+vec2 centeredCoordinates() {
+  vec2 st = FlutterFragCoord().xy / resolution.xy;
+  vec2 screen = (st - vec2(0.5)) * 2.0;
+  screen.y *= resolution.y/ resolution.x;
+  return screen;
+}
 
-    for(float i = 0.0; i <3.0;i++) {
-            st = fract(st*1.5)-0.5;
-    float d = length(st);
+float rimPct(float rad) {
+    float pct1 = step(rad, 0.7);
+    float pct2 = step(rad, 0.68);
+    return pct1 * (1 - pct2);
+}
 
-    vec3 col = vec3(d);
+float stepPct(float st, float rad) {
+  float pct1 = step(rad, st);
+  float pct2 = step(rad, st - 0.02);
+  return pct1 * (1 - pct2);
+}
 
-    d = cos((d+u_time*0.4)*8.0)/8.0;
-    d = abs(d);
+void main() {
 
-    d = .01/d;
+  float lineWidth = 0.01;
+  float spreadAngle = 90.0;
+  vec3 rimColor = vec3(1.,1.,0.);
+  vec3 stepColor = vec3(0.1);
 
-    final += col * d;
-    }
+  vec2 coord = centeredCoordinates();
 
-    gl_FragColor = vec4(final, 1.0);
+  float dist = length(coord);
+
+  float rimPct = rimPct(dist);
+  
+  float stepPct = stepPct(0.1, dist) + stepPct(0.3, dist) + stepPct(0.5, dist);
+
+  float xPct = 0.0;
+  if(abs(coord.x) < lineWidth && dist < 0.7) xPct = 1.0;
+
+  float yPct = 0.0;
+  if(abs(coord.y) < lineWidth && dist < 0.7) yPct = 1.0;
+  
+  vec3 color = rimColor * rimPct;
+  
+  if(stepPct != 0.0 || rimPct != 0.0) {
+    color += stepColor*stepPct;
+  } else {
+    color += xPct*stepColor + yPct*stepColor;
+  }
+
+  float angle = vectorAngleInDegrees(coord);
+  if(angle >= 0.0 && angle <=spreadAngle && dist <0.682) {
+    fragColor = vec4(mix(vec3(.7,.7,0.),color,smoothstep(0., spreadAngle, angle)),1.);
+  } else {
+    fragColor = vec4(color,1.);
+  
+  }
 }
