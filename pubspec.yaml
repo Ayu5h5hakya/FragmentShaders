@@ -29,4 +29,4 @@ flutter:
 
   uses-material-design: true
   shaders:
-    - assets/shaders/first_shader.frag
+    - assets/shaders/radar.frag

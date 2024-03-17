@@ -61,7 +61,7 @@ class _RadarWidgetState extends State<RadarWidget>
   @override
   Widget build(BuildContext context) {
     return ShaderBuilder(
-      assetKey: 'assets/shaders/first_shader.frag',
+      assetKey: 'assets/shaders/radar.frag',
       (context, shader, child) => CustomPaint(
         size: MediaQuery.of(context).size,
         painter: ShaderPainter(
