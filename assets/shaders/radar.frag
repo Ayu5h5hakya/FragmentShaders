@@ -48,7 +48,7 @@ void main() {
   vec2 coord = centeredCoordinates();
   float dist = length(coord);
   float rimPct = rimPct(dist);
-
+  float stepPct = stepPct(0.1, dist) + stepPct(0.3, dist) + stepPct(0.5, dist);
   float xPct = 0.0;
   if(abs(coord.x) < lineWidth && dist < 0.7) xPct = 1.0;
 
