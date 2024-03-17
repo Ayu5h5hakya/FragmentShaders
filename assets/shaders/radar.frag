@@ -18,6 +18,18 @@ vec2 centeredCoordinates() {
   return screen;
 }
 
+float rimPct(float rad) {
+    float pct1 = step(rad, 0.7);
+    float pct2 = step(rad, 0.68);
+    return pct1 * (1 - pct2);
+}
+
+float stepPct(float st, float rad) {
+  float pct1 = step(rad, st);
+  float pct2 = step(rad, st - 0.02);
+  return pct1 * (1 - pct2);
+}
+
 void main() {
   float lineWidth = 0.01;
   float spreadAngle = 90.0;
@@ -27,4 +39,18 @@ void main() {
   vec2 coord = centeredCoordinates();
   float dist = length(coord);
   float rimPct = rimPct(dist);
+
+  float xPct = 0.0;
+  if(abs(coord.x) < lineWidth && dist < 0.7) xPct = 1.0;
+
+  float yPct = 0.0;
+  if(abs(coord.y) < lineWidth && dist < 0.7) yPct = 1.0;
+  
+  vec3 color = rimColor * rimPct;
+  
+  if(stepPct != 0.0 || rimPct != 0.0) {
+    color += stepColor*stepPct;
+  } else {
+    color += xPct*stepColor + yPct*stepColor;
+  }
 }
