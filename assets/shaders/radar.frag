@@ -12,5 +12,8 @@ out vec4 fragColor;
 #define TIME_SCALE 0.0005
 
 void main() {
-    
+  float lineWidth = 0.01;
+  float spreadAngle = 90.0;
+  vec3 rimColor = vec3(1.,1.,0.);
+  vec3 stepColor = vec3(0.1);
 }
