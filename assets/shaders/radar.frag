@@ -26,4 +26,5 @@ void main() {
 
   vec2 coord = centeredCoordinates();
   float dist = length(coord);
+  float rimPct = rimPct(dist);
 }
