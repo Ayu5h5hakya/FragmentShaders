@@ -39,6 +39,8 @@ class MyPainter extends CustomPainter {
     shader.setFloat(1, color.green.toDouble() / 255);
     shader.setFloat(2, color.blue.toDouble() / 255);
     shader.setFloat(3, color.alpha.toDouble() / 255);
+    shader.setFloat(4, size.width);
+    shader.setFloat(5, size.height);
     canvas.drawRect(
       Rect.fromLTWH(0, 0, size.width, size.height),
       Paint()..shader = shader,

@@ -1,12 +1,23 @@
-#version 460 core
+#ifdef GL_ES
+precision mediump float;
+#endif
 
-#include <flutter/runtime_effect.glsl>
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
 
-uniform vec4 uColor;
-uniform vec2 uSize;
-
-out vec4 FragColor;
+float plot(vec2 st) {
+    return smoothstep(0.2,0.0,abs(st.y-st.x));
+}
 
 void main() {
-    FragColor = uColor; 
+    vec2 st = gl_FragCoord.xy/u_resolution;
+    float y = st.y;
+    vec3 color = vec3(y);
+    float pct = plot(st);
+    //color = (1.0-pct)*color;
+    color = (1.0-pct)*color+pct*vec3(0.0,1.0,0.0);
+    gl_FragColor = vec4(color,1.0);
+    // gl_FragColor = vec4(color,1.0);
+    //gl_FragColor = vec4(0.0,0.2,0.0,1.0);
 }
