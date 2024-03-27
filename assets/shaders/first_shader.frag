@@ -6,18 +6,10 @@ uniform vec2 u_resolution;
 uniform vec2 u_mouse;
 uniform float u_time;
 
-float plot(vec2 st) {
-    return smoothstep(0.2,0.0,abs(st.y-st.x));
-}
-
-void main() {
+void main(){
     vec2 st = gl_FragCoord.xy/u_resolution;
-    float y = st.y;
-    vec3 color = vec3(y);
-    float pct = plot(st);
-    //color = (1.0-pct)*color;
-    color = (1.0-pct)*color+pct*vec3(0.0,1.0,0.0);
-    gl_FragColor = vec4(color,1.0);
-    // gl_FragColor = vec4(color,1.0);
-    //gl_FragColor = vec4(0.0,0.2,0.0,1.0);
+    vec2 mc = u_mouse.xy/u_resolution;
+    float pct = distance(st, mc);
+    gl_FragColor = vec4(vec3(smoothstep(0.2,0.3, pct)), 1.0);
+
 }
